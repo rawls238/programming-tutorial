@@ -12,10 +12,9 @@ library(parallel)
 
 ## PART ONE: Answer / write code for all the TODOs. This is best for people who this is the first time
 
-randomTutorial <- function() {
-  
+partOne <- function() {
+  print("STARTING PART ONE")
   ## Reading data
-  
   ## TODO: move this into an external CSV file and rewrite this
   a <- "a,b,c\n1,3,2\n4,5,6\n7,8,9\n10,11,12\n15,20,25"
   con <- textConnection(a)
@@ -35,7 +34,6 @@ randomTutorial <- function() {
   ## and c is a multiple of three
   
   ## TODO: Use ggplot2 to make a basic scatter plot, with the "a" variable on the x-axis and "b" variable on the y-axis  
-  qplot(data[,"a"], data[,"b"])
   
   reg_c <- lm(c ~ a + b, data)
   reg_c_alternative <- lm(data$c ~ data$a + data$b) #alternative way to run the same regression
@@ -43,6 +41,8 @@ randomTutorial <- function() {
   print(reg_c) #print results
   print(reg_c_no_intercept)
   print(summary(reg_c_no_intercept)) # print summary of regression
+  
+  #TODO: Write a regression of c = beta_1*a + beta_2*a^2 + beta_3*b
   
   # sum the numbers from 1 to 6
   sum = 1
@@ -52,17 +52,6 @@ randomTutorial <- function() {
   sum = sum + 5
   sum = sum + 6
   print(sum)
-  N = 100
-  sum = 0.0
-  for(i in 1:N) {
-    sum = sum + i
-  }
-  f <- function(i) {
-    return(i*i)
-  }
-  for (i in 1:N) {
-    sum = sum + f(i)
-  }
   # TODO: think about what's wrong with this? how would you rewrite it?
   # TODO: Suppose I wanted the sum for all numbers from 1 to 100 (without using math tricks). How would you write this?
   # TODO: Suppose I wanted the sum of f(1) to f(100) for some function f. How would you write this?
@@ -81,30 +70,29 @@ randomTutorial <- function() {
 
 
 
+partOne()
+
+
 
 
 ## PART 2: Answer / write code for all the TODOs. This is a bit harder than the one above and more intended for people who have more programming experience
 
 
-
+print("STARTING PART TWO")
 
 ## TODO: Write this function that, given the return object from summary(lm(...)), 
 ## pulls out the regression coefficient for some variable passed into the function
 ## e.g. for y = beta_0 + beta_1 *x, akcd(reg, "x") = beta_1
 ## ALSO TODO: Rename the function to something sensible.
-akcd <- function(reg_result, coef_name) {
-  return(reg_result$coefficients[coef_name, 1])
+akcd <- function() {
 }
 
 ## TODO: Write this function that, given the return object from summary(lm(...))
 ## checks if some value passed into the function is in the 95% confidence interval for the regression
 ## e.g. for y = beta_0 + beta_1*x, bkcd(reg_summ, "x", 2) = TRUE
 ## ALSO TODO: rename the function to something sensible.
-bkcd <- function(reg_summary_result, coef_name, test_val) {
-  CV <- 1.96
-  estimate <- akcd(reg_summary_result, coef_name)
-  se <- reg_summary_result$coefficients[coef_name, 2]
-  return(test_val >= (estimate - CV*se) && test_val <= (estimate + CV*se))
+bkcd <- function() {
+  critical_value <- 1.96
 }
 
 
@@ -113,11 +101,11 @@ bkcd <- function(reg_summary_result, coef_name, test_val) {
 ## Below I've implemented a naive version of this, but our goal is to rewrite it
 ##
 
-naive_version <- function (NUM_SAMPLES) {
+naive_version <- function (num_samples) {
   x_vals <- c()
   u_vals <- c()
   y_vals <- c()
-  for (i in 1:NUM_SAMPLES) {
+  for (i in 1:num_samples) {
     x_vals <- c(x_vals, rexp(1))
     u_vals <- c(u_vals, rnorm(1))
     y_vals <- c(y_vals, 2 * x_vals[i] + u_vals[i])
@@ -132,30 +120,12 @@ naive_version <- function (NUM_SAMPLES) {
 
 
 # TODO: Keep the for loop in the naive function, speed up the function above by making the portion inside the for-loop more efficient
-less_naive <- function(NUM_SAMPLES) {
-  y_vals <- c()
-  x_vals <- rexp(NUM_SAMPLES)
-  u_vals <- rnorm(NUM_SAMPLES)
-  for (i in 1:NUM_SAMPLES) {
-    y_vals <- c(y_vals, 2 * x_vals[i] + u_vals[i])
-  }
-  print(lm(y_vals ~ x_vals))
+less_naive <- function(num_samples) {
 }
 
 # TODO: Now, refactor the less_naive function to be able to use the apply function (vectorize it)
 # Read this - http://alyssafrazee.com/2014/01/29/vectorization.html, docs for apply: https://www.rdocumentation.org/packages/base/versions/3.4.3/topics/apply
-even_less_naive <- function(NUM_SAMPLES) {
-  x_vals <- rexp(NUM_SAMPLES)
-  u_vals <- rnorm(NUM_SAMPLES)
-  vals <- cbind(x_vals, u_vals)
-  
-  ## Write a function to calculate the y value given an x and u value
-  calculate_y <- function(x) {
-    return (2*x[1] + x[2])
-  }
-  
-  y_vals <- apply(vals, 1, calculate_y)
-  print(lm(y_vals ~ x_vals))
+even_less_naive <- function(num_samples) {
 }
 
 # TODO: Convince yourself that parallelization in this context is a good idea.
@@ -164,26 +134,18 @@ even_less_naive <- function(NUM_SAMPLES) {
 
 # TODO: now let's implement a (simple) parallelized version of our even_less_naive code using the parallel package (https://stat.ethz.ch/R-manual/R-devel/library/parallel/doc/parallel.pdf)
 
-not_so_naive <- function(NUM_SAMPLES) {
-  x_vals <- rexp(NUM_SAMPLES)
-  u_vals <- rnorm(NUM_SAMPLES)
-  vals <- cbind(x_vals, u_vals)
-  
-  ## Write a function to calculate the y value given an x and u value
-  calculate_y <- function(x) {
-    return (2*x[1] + x[2])
-  }
-  
-  no_cores <- detectCores() - 1
-  
-  # Initiate cluster
-  cl <- makeCluster(no_cores)
-  
-  y_vals <- parRapply(cl, vals, calculate_y)
-  
-  print(lm(y_vals ~ x_vals))
-  stopCluster(cl)
+not_so_naive <- function(num_samples) {
 }
+
+
+# TODO: run this without modification...does it finish?
+NUM_SAMPLES <- 1000000
+start_time <- Sys.time()
+naive_version(NUM_SAMPLES) # change this for different versions of the implementation
+end_time <- Sys.time()
+cat("Simulation took", difftime(end_time, start_time, units = "secs"), "seconds")
+
+# TODO: think of a good way to rename the different functions above
 
 
 # TODO: after you've written all the code above, let's see what the tradeoffs for parallelization are: 
@@ -197,9 +159,4 @@ not_so_naive <- function(NUM_SAMPLES) {
 # TODO: Final question! Why is the method above a bad method of benchmarking (relevant question to ask yourself: are runtimes across runs deterministic?)? If you wanted to benchmark
 # properly what are some things you could change?
 
-NUM_SAMPLES <- 1000
-start_time <- Sys.time()
-parallel_apply_func(NUM_SAMPLES)
-end_time <- Sys.time()
-cat("Simulation took", difftime(end_time, start_time, units = "secs"), "seconds")
 
