@@ -10,7 +10,8 @@ library(ggplot2)
 library(parallel)
 
 
-## PART ONE: Answer / write code for all the TODOs. This is best for people who this is the first time
+## PART ONE: Answer / write code for all the TODOs. This is best for people who this is the first time programming
+## and will teach you the basics of R
 
 partOne <- function() {
   print("STARTING PART ONE")
@@ -60,7 +61,7 @@ partOne <- function() {
 
   # TODO: write a function that prints YES if some value passed to the function is even and NO if that value is odd
   
-  #TODO: understand (roughly) why the output isn't 0 (relevant reading: https://blog.codinghorror.com/why-do-computers-suck-at-math/, http://fabiensanglard.net/floating_point_visually_explained/)
+  #TODO: understand (roughly) why the output isn't 0 (relevant readings: https://blog.codinghorror.com/why-do-computers-suck-at-math/, http://fabiensanglard.net/floating_point_visually_explained/)
   a <- 1.0 - 0.9 - 0.1
   print(a)
   
@@ -123,9 +124,15 @@ naive_version <- function (num_samples) {
 less_naive <- function(num_samples) {
 }
 
-# TODO: Now, refactor the less_naive function to be able to use the apply function (vectorize it)
-# Read this - http://alyssafrazee.com/2014/01/29/vectorization.html, docs for apply: https://www.rdocumentation.org/packages/base/versions/3.4.3/topics/apply
+# TODO: Now, refactor the less_naive function to be able to use the apply function
+# Docs for apply: https://www.rdocumentation.org/packages/base/versions/3.4.3/topics/apply
 even_less_naive <- function(num_samples) {
+}
+
+# TODO: Read about the vectorization (http://www.noamross.net/blog/2014/4/16/vectorization-in-r--why.html). Now, rewrite
+# the same function as above but in a vectorized manner.
+
+the_least_naive_function <- function(num_sample) {
 }
 
 # TODO: Convince yourself that parallelization in this context is a good idea.
@@ -151,10 +158,7 @@ cat("Simulation took", difftime(end_time, start_time, units = "secs"), "seconds"
 # TODO: after you've written all the code above, let's see what the tradeoffs for parallelization are: 
 
 # Compute the time difference between the not_so_naive and even_less_naive functions for ONE run of the following values of NUM_SAMPLES: (100, 10000, 1000000, 5000000)
-# Do you ever see that the parallelized version is slower than the non-parallelized version?
-
-# Re-run the same exercise for the vectorized version versus the non-vectorized version. Do you see that the vectorized version is faster than the non-vectorized version
-# for all sample values? If so, why do you see the vectorized version is always (weakly) faster but the parallelized version isn't (HINT: think of fixed costs..)
+# Do you ever see that the parallelized version is slower than the non-parallelized version (why would this be the case?)?
 
 # TODO: Final question! Why is the method above a bad method of benchmarking (relevant question to ask yourself: are runtimes across runs deterministic?)? If you wanted to benchmark
 # properly what are some things you could change?
